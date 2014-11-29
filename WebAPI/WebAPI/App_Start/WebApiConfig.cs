@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System.Linq;
+using System.Net.Http.Formatting;
 using System.Web.Http;
 
 namespace WebAPI
@@ -19,6 +20,15 @@ namespace WebAPI
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            var json = config.Formatters.JsonFormatter;
+            json.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+
+            var jsonStyleFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
+            jsonStyleFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
         }
     }
 }
